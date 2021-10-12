@@ -90,6 +90,7 @@ private:
     std::string header = Genotyper::get_vcf_header(fasta_path, full_command, chroms, samples_to_genotype_);
     vcf_writer_.write_header(header);
   }
+  bool skip_assembly_;
 
 public:
  GenotyperBamProcessor(bool use_bam_rgs, bool remove_pcr_dups) : SNPBamProcessor(use_bam_rgs, remove_pcr_dups){
@@ -120,6 +121,7 @@ public:
     recalc_stutter_model_  = false;
     def_stutter_model_     = NULL;
     ref_vcf_               = NULL;
+    skip_assembly_         = false;
   }
 
   ~GenotyperBamProcessor(){
@@ -149,6 +151,9 @@ public:
     // The motif length will vary for each locus, but we'll use 2 so that we can utilize the constructor
     def_stutter_model_ = new StutterModel(inframe_geom, inframe_up, inframe_down, outframe_geom, outframe_up, outframe_down, 2);
   }
+  void skip_assembly(){
+	skip_assembly_ = true;
+}
 
   void set_output_viz(const std::string& viz_file){
     output_viz_ = true;

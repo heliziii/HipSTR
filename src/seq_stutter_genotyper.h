@@ -133,6 +133,7 @@ class SeqStutterGenotyper : public Genotyper {
 			std::ostream& html_output, VCFWriter* vcf_writer, std::ostream& logger);
 
   RegionGroup* region_group_;
+  bool skip_assembly;
 
 
   // Private unimplemented copy constructor and assignment operator to prevent operations
@@ -143,7 +144,7 @@ class SeqStutterGenotyper : public Genotyper {
   SeqStutterGenotyper(const RegionGroup& region_group, bool haploid, bool reassemble_flanks,
 		      std::vector<Alignment>& alignments, std::vector< std::vector<double> >& log_p1, std::vector< std::vector<double> >& log_p2,
 		      const std::vector<std::string>& sample_names, const std::string& chrom_seq,
-		      std::vector<StutterModel*>& stutter_models, VCF::VCFReader* ref_vcf, std::ostream& logger): Genotyper(haploid, sample_names, log_p1, log_p2){
+		      std::vector<StutterModel*>& stutter_models, VCF::VCFReader* ref_vcf, std::ostream& logger, bool skip_assembly_): Genotyper(haploid, sample_names, log_p1, log_p2){
     region_group_          = region_group.copy();
     alns_                  = alignments;
     seed_positions_        = NULL;
@@ -162,6 +163,7 @@ class SeqStutterGenotyper : public Genotyper {
     ref_vcf_               = ref_vcf;
     assert(num_reads_ == alns_.size());
     init(stutter_models, chrom_seq, logger);
+    skip_assembly = skip_assembly_;
   }
 
   ~SeqStutterGenotyper(){

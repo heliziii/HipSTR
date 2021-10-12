@@ -107,6 +107,7 @@ void print_usage(int def_mdist, int def_min_reads, int def_max_reads, int def_ma
     //<< "\t" << "                                      "  << "\t" << " Enabling this option usually slightly decreases accuracy but shortens runtimes (~2x)"      << "\n"
     //<< "\t" << "--read-qual-trim     <min_qual>       "  << "\t" << "Trim both ends of a read until a base has quality score > MIN_QUAL (Default = 5)"    << "\n"
 	    << "\t" << "--fam <fam_file>                      "  << "\t" << "FAM file containing pedigree information for samples of interest. Use the pedigree"  << "\n"
+	    << "\t" << "--skip-assembly                       "  << "\t" << "Skip assembly for genotyping with long reads" << "\n"
 	    << "\t" << "                                      "  << "\t" << "  information to filter SNPs prior to phasing STRs (Default = use all SNPs)"         << "\n"
 	    << "\n" << "\n"
 	    << "*** Looking for answers to commonly asked questions or usage examples? ***"                     << "\n"
@@ -135,7 +136,7 @@ void parse_command_line_args(int argc, char** argv,
     exit(0);
   }
 
-  int print_help = 0, print_version = 0, quiet_log = 0, silent_log = 0, def_stutter_model = 0, bams_from_10x = 0;
+  int print_help = 0, print_version = 0, quiet_log = 0, silent_log = 0, def_stutter_model = 0, bams_from_10x = 0, skip_assembly = 0;
 
   static struct option long_options[] = {
     {"bams",            required_argument, 0, 'b'},
@@ -186,6 +187,7 @@ void parse_command_line_args(int argc, char** argv,
     {"quiet",              no_argument, &quiet_log, 1},
     {"silent",             no_argument, &silent_log, 1},
     {"skip-genotyping",    no_argument, &skip_genotyping, 1},
+    {"skip-assembly",	   no_argument, &skip_assembly, 1},
     {0, 0, 0, 0}
   };
 
@@ -343,7 +345,10 @@ void parse_command_line_args(int argc, char** argv,
     bam_processor.use_10x_bam_tags();
     bam_processor.full_logger() << "Using 10X BAM tags to genotype and phase STRs (WARNING: Any arguments provided to --snp-vcf will be ignored)" << std::endl;
   }
-}
+  if (skip_assembly == 1){
+    bam_processor.skip_assembly();
+  }
+}	
 
 int main(int argc, char** argv){
   double total_time = clock();
