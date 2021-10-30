@@ -60,7 +60,6 @@ class BamProcessor {
  BaseQuality base_quality_;
 
  bool bams_from_10x_; // True iff BAMs were generated from 10X GEMCODE platform
-
  bool quiet_, silent_;
  bool log_to_file_;
  NullOstream null_log_;
@@ -93,7 +92,7 @@ class BamProcessor {
    total_read_filter_time_  = 0;
    locus_read_filter_time_  = -1;
    MAX_STR_LENGTH           = 100;
-   MIN_SUM_QUAL_LOG_PROB    = -1e18;
+   MIN_SUM_QUAL_LOG_PROB    = -10;
    quiet_                   = false;
    silent_                  = false;
    log_to_file_             = false;

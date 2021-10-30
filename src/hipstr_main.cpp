@@ -107,8 +107,9 @@ void print_usage(int def_mdist, int def_min_reads, int def_max_reads, int def_ma
     //<< "\t" << "                                      "  << "\t" << " Enabling this option usually slightly decreases accuracy but shortens runtimes (~2x)"      << "\n"
     //<< "\t" << "--read-qual-trim     <min_qual>       "  << "\t" << "Trim both ends of a read until a base has quality score > MIN_QUAL (Default = 5)"    << "\n"
 	    << "\t" << "--fam <fam_file>                      "  << "\t" << "FAM file containing pedigree information for samples of interest. Use the pedigree"  << "\n"
+            << "\t" << "                                      "  << "\t" << "  information to filter SNPs prior to phasing STRs (Default = use all SNPs)"         << "\n"
 	    << "\t" << "--skip-assembly                       "  << "\t" << "Skip assembly for genotyping with long reads" << "\n"
-	    << "\t" << "                                      "  << "\t" << "  information to filter SNPs prior to phasing STRs (Default = use all SNPs)"         << "\n"
+	    << "\t" << "--min-sum-qual	      <threshold>     "  << "\t" << "Allow for lower quality threshold for long read data" << "\n"
 	    << "\n" << "\n"
 	    << "*** Looking for answers to commonly asked questions or usage examples? ***"                     << "\n"
 	    << "\t i.  An in-depth description of HipSTR is available at https://hipstr-tool.github.io/HipSTR"  << "\n"
@@ -131,6 +132,7 @@ void parse_command_line_args(int argc, char** argv,
   int def_max_flanks        = bam_processor.MAX_FLANK_HAPLOTYPES;
   int def_max_haplotypes    = bam_processor.MAX_TOTAL_HAPLOTYPES;
   double def_min_flank_freq = bam_processor.MIN_FLANK_FREQ;
+
   if (argc == 1 || (argc == 2 && std::string("-h").compare(std::string(argv[1])) == 0)){
     print_usage(def_mdist, def_min_reads, def_max_reads, def_max_str_len, def_max_haplotypes, def_max_flanks, def_min_flank_freq);
     exit(0);
@@ -168,6 +170,7 @@ void parse_command_line_args(int argc, char** argv,
     {"max-str-len",     required_argument, 0, 'x'},
     {"filt-bam",        required_argument, 0, 'y'},
     {"viz-out",         required_argument, 0, 'z'},
+    {"min-sum-qual",	required_argument, 0, 'W'},
     {"10x-bams",           no_argument, &bams_from_10x, 1},
     {"h",                  no_argument, &print_help, 1},
     {"help",               no_argument, &print_help, 1},
@@ -194,7 +197,7 @@ void parse_command_line_args(int argc, char** argv,
   std::string filename;
   while (true){
     int option_index = 0;
-    int c = getopt_long(argc, argv, "b:B:c:d:D:e:f:F:g:G:i:I:j:k:l:m:n:o:p:q:r:s:S:t:u:v:w:x:y:z:", long_options, &option_index);
+    int c = getopt_long(argc, argv, "b:B:c:d:D:e:f:F:g:G:i:I:j:k:l:m:n:o:p:q:r:s:S:t:u:v:w:x:y:z:W:", long_options, &option_index);
     if (c == -1)
       break;
 
@@ -309,6 +312,9 @@ void parse_command_line_args(int argc, char** argv,
     case 'F':
       Genotyper::MAX_FLANK_INDEL_FRAC = atof(optarg);
       break;
+    case 'W':
+	bam_processor.MIN_SUM_QUAL_LOG_PROB = atof(optarg);
+	break;
     case '?':
       printErrorAndDie("Unrecognized command line option");
       break;
