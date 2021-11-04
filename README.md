@@ -1,5 +1,20 @@
-This Repository is forked from the HipSTR tool main github page. HipSTR code has been modified to get optimized for long reads. 
+This Repository is forked from the HipSTR tool main github page. HipSTR code has been modified to get optimized for long reads. Installation process is same as original HipSTR tool. For running on long read dataset, following parameters are suggested:
 
+```
+./HipSTR --bams             long_read.bam
+         --fasta            genome.fa
+         --regions          str_regions.bed
+         --stutter-in       ext_long_read_error_models.txt
+         --str-vcf          str_calls.vcf.gz
+	 --skip-assembly
+	 --max-flank-indel  1
+	 --min-sum-qual     -1e18
+	 --no-rmdup
+	 --use-unpaired
+	 --max-str-len      <max-str-len>    
+	 --10x-bams
+```
+* **10x-bams** : For using haplotype specific bam files. Input bam file should be happlotagged first to use this option. 
 # HipSTR
 **H**aplotype **i**nference and **p**hasing for **S**hort **T**andem **R**epeats  
 ![HipSTR icon!](https://raw.githubusercontent.com/tfwillems/HipSTR/master/img/HipSTR_icon_small.png)	
