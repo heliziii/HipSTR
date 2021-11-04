@@ -1,3 +1,5 @@
+This Repository is forked from the HipSTR tool main github page. HipSTR code has been modified to get optimized for long reads. 
+
 # HipSTR
 **H**aplotype **i**nference and **p**hasing for **S**hort **T**andem **R**epeats  
 ![HipSTR icon!](https://raw.githubusercontent.com/tfwillems/HipSTR/master/img/HipSTR_icon_small.png)	
