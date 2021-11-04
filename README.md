@@ -1,4 +1,4 @@
-This repository is forked from HipSTR tool which is originally developed to genotype Short Tandem Repeats (STRs) with Illumina reads. HipSTR code has been modified to get optimized for long reads. Installation process is same as original HipSTR tool. For running on long read dataset, following parameters are suggested:
+This repository is forked from HipSTR tool which is originally developed to genotype Short Tandem Repeats (STRs) with Illumina sequencing data. HipSTR code has been modified to get optimized for long reads. Installation process is same as original HipSTR tool. For running on long read dataset, following parameters are suggested:
 
 ```
 ./HipSTR --bams             long_read.bam
