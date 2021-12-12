@@ -108,8 +108,11 @@ double StutterAlignerClass::align_pcr_deletion_reverse(const int base_seq_len,  
 						       int& best_del_pos){
   assert(D < 0 && block_len_+D >= 0 && base_seq_len <= block_len_+D);
   log_probs_.clear();
-  int* upstream_matches = upstream_match_lengths_[-D/period_ - 1] + block_len_ - 1;
-  double log_prior = -int_log(block_len_+D+1);
+	
+ int* upstream_matches = upstream_match_lengths_[-D/period_ - 1] + block_len_ - 1;
+  
+double log_prior = -int_log(block_len_+D+1);
+
   double log_prob  = log_prior;
 
   // Compute probability for i = 0
@@ -118,6 +121,7 @@ double StutterAlignerClass::align_pcr_deletion_reverse(const int base_seq_len,  
   else
     for (int j = 0; j > -base_seq_len; j--)
       log_prob += (block_seq_[j+D] == base_seq[j] ? base_log_correct[j] : base_log_wrong[j]);
+
   best_del_pos   = 0;
   double best_LL = log_prob;
   log_probs_.push_back(log_prob);

@@ -545,6 +545,7 @@ void SeqStutterGenotyper::calc_hap_aln_probs(std::vector<bool>& realign_to_haplo
 	assert(haplotype_->num_combs() == realign_to_haplotype.size() && haplotype_->num_combs() == num_alleles_);
 	HapAligner hap_aligner(haplotype_, realign_to_haplotype);
 
+
 	// Align each pooled read to each haplotype
 	AlnList& pooled_alns       = pooler_.get_alignments();
 	double* log_pool_aln_probs = new double[pooled_alns.size()*num_alleles_];
@@ -657,10 +658,12 @@ bool SeqStutterGenotyper::genotype(int max_total_haplotypes, int max_flank_haplo
 
 	// Align each read to each candidate haplotype and store them in the provided arrays
 	logger << "Aligning reads to each candidate haplotype" << std::endl;
-	std::vector<bool> realign_to_haplotype(num_alleles_, true);
+	std::vector<bool> realign_to_haplotype(num_alleles_, true);	
 	assert(realign_to_haplotype.size() == haplotype_->num_combs());
 	calc_hap_aln_probs(realign_to_haplotype);
+	
 	calc_log_sample_posteriors();
+
 
 	if (ref_vcf_ == NULL){
 		// Look for additional alleles in stutter artifacts and align to them (if necessary)
@@ -686,7 +689,6 @@ bool SeqStutterGenotyper::genotype(int max_total_haplotypes, int max_flank_haplo
 			remove_alleles(unused_indices);
 		}
 	}
-
 	if (reassemble_flanks_)
 		if (!assemble_flanks(max_total_haplotypes, max_flank_haplotypes, min_flank_freq, logger))
 			return false;

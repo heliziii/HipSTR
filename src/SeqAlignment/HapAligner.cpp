@@ -3,7 +3,7 @@
 #include <map>
 #include <set>
 #include <sstream>
-
+#include <iostream>
 #include "AlignmentModel.h"
 #include "AlignmentTraceback.h"
 #include "HapAligner.h"
@@ -49,7 +49,7 @@ void HapAligner::align_seq_to_hap(Haplotype* haplotype, bool reuse_alns,
   for (int block_index = 0; block_index < haplotype->num_blocks(); block_index++){
     const std::string& block_seq = haplotype->get_seq(block_index);
     bool stutter_block           = (haplotype->get_block(block_index)->get_repeat_info()) != NULL;
-
+	
     // Skip any blocks to the left of the last changed block (as we can reuse the alignments)
     if (reuse_alns && block_index < haplotype->last_changed()){
       haplotype_index += block_seq.size() + (block_index == 0 ? -1 : 0);
@@ -80,13 +80,18 @@ void HapAligner::align_seq_to_hap(Haplotype* haplotype, bool reuse_alns,
 	int art_idx    = 0;
 	double best_LL = IMPOSSIBLE;
 	artifact_size_ptr[j] = -10000;
+
 	for (int artifact_size = rep_info->max_deletion(); artifact_size <= rep_info->max_insertion(); artifact_size += period){
 	  int art_pos          = -1;
 	  int base_len         = std::min(block_len+artifact_size, j+1);
+
 	  if (base_len >= 0){
+
 	    double prob          = stutter_aligner->align_stutter_region_reverse(base_len, seq_0+j, offset, base_log_wrong+j, base_log_correct+j, artifact_size, art_pos);
+
 	    double pre_prob      = (j-base_len < 0 ? 0 : match_matrix[j-base_len + prev_row_index]);
 	    block_probs[art_idx] = rep_info->log_prob_pcr_artifact(block_option, artifact_size) + prob + pre_prob;
+
 	  }
 	  else
 	    block_probs[art_idx] = IMPOSSIBLE;
@@ -96,11 +101,13 @@ void HapAligner::align_seq_to_hap(Haplotype* haplotype, bool reuse_alns,
 	    best_LL              = block_probs[art_idx];
 	  }
 	  art_idx++;
+	
 	}
 
 	match_matrix[matrix_index]    = fast_log_sum_exp(block_probs);
 	insert_matrix[matrix_index]   = IMPOSSIBLE;
 	deletion_matrix[matrix_index] = IMPOSSIBLE;
+
       }
       
       // Adjust indices appropriately
@@ -154,6 +161,7 @@ void HapAligner::align_seq_to_hap(Haplotype* haplotype, bool reuse_alns,
 	  match_probs.clear();
 	}	
       }
+
     }
   }
   delete [] L_log_probs;
@@ -574,7 +582,7 @@ void HapAligner::process_read(const Alignment& aln, int seed_base, const BaseQua
 			      double* prob_ptr, AlignmentTrace& trace){
   assert(seed_base != -1);
   assert(aln.get_sequence().size() == aln.get_base_qualities().size());
-
+	std::cout<<"HIIIIII"<<std::endl;
   // Extract probabilites related to base quality scores
   double* base_log_wrong   = new double[aln.get_sequence().size()]; // log10(Prob(error))
   double* base_log_correct = new double[aln.get_sequence().size()]; // log10(Prob(correct))
@@ -582,7 +590,8 @@ void HapAligner::process_read(const Alignment& aln, int seed_base, const BaseQua
   for (unsigned int j = 0; j < qual_string.size(); j++){
     base_log_wrong[j]   = base_quality->log_prob_error(qual_string[j]);
     base_log_correct[j] = base_quality->log_prob_correct(qual_string[j]);
-  }
+  
+}
 
   const char* base_seq = aln.get_sequence().c_str();
   int base_seq_len     = (int)aln.get_sequence().size();
@@ -617,7 +626,6 @@ void HapAligner::process_read(const Alignment& aln, int seed_base, const BaseQua
       reuse_alns = false;
       continue;
     }
-
     // Perform alignment to current haplotype
     double l_prob, r_prob;
     int max_index;
@@ -629,6 +637,7 @@ void HapAligner::process_read(const Alignment& aln, int seed_base, const BaseQua
     
     double LL = compute_aln_logprob(base_seq_len, seed_base, base_seq[seed_base], base_log_wrong[seed_base], base_log_correct[seed_base],
 				    l_match_matrix, l_insert_matrix, l_deletion_matrix, l_prob, r_match_matrix, r_insert_matrix, r_deletion_matrix, r_prob, max_index);
+    
     *prob_ptr = LL;
     prob_ptr++;
     reuse_alns = true;
