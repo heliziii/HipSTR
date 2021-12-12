@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <assert.h>
 #include <math.h>
+#include<iostream>
 
 #include "mathops.h"
 
@@ -10,11 +11,11 @@ const double LOG_ONE_HALF  = log(0.5);
 const double TOLERANCE     = 1e-10;
 const double LOG_E_BASE_10 = 0.4342944819;
 
-double INT_LOGS[10000];
+double INT_LOGS[1000000];
 
 void precompute_integer_logs(){
   INT_LOGS[0] = -1000;
-  for (unsigned int i = 1; i < 10000; i++)
+  for (unsigned int i = 1; i < 1000000; i++)
     INT_LOGS[i] = log(i);
 }
 
